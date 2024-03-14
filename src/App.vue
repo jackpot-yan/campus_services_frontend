@@ -1,79 +1,14 @@
 <template>
   <div id="main">
-    <div id="top">
-      <div id="name">JackPot</div>
-      <el-menu
-          :default-active="activeIndex"
-          class="el-menu-demo"
-          mode="horizontal"
-          @select="handleSelect"
-          text-color="#fff"
-          active-text-color="#ffd04b"
-      >
-        <el-menu-item index="1" @click="home">网站首页</el-menu-item>
-        <el-menu-item index="2" @click="profile">个人简介</el-menu-item>
-        <el-menu-item index="3" @click="work">求学和工作</el-menu-item>
-        <el-menu-item index="4" @click="skill">专业技能</el-menu-item>
-        <el-menu-item index="5" @click="experience">闲时作品</el-menu-item>
-        <el-menu-item index="6" @click="information">联系我</el-menu-item>
-      </el-menu>
-    </div>
-    <div id="bottom">
-      <router-view v-slot="{ Component }">
+    <router-view></router-view>
+      <!-- <router-view v-slot="{ Component }">
         <transition name="scale" mode="out-in">
           <component :is="Component" />
         </transition>
-      </router-view>
-    </div>
+      </router-view> -->
   </div>
 </template>
 
-<script lang="ts" setup>
-import {ref} from 'vue'
-import {useRouter} from 'vue-router'
-
-const activeIndex = ref('1')
-const route = useRouter()
-
-const handleSelect = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
-
-const home = () => {
-  route.push({
-    name: 'home'
-  })
-}
-
-const profile = () => {
-  route.push({
-    name: 'profile'
-  })
-}
-
-const skill = () => {
-  route.push({
-    name: 'skill'
-  })
-}
-
-const experience = () => {
-  route.push({
-    name: 'experience'
-  })
-}
-
-const work = () => {
-  route.push({
-    name: 'work'
-  })
-}
-const information = () => {
-  route.push({
-    name: 'information',
-  })
-}
-</script>
 
 <style>
 html,
@@ -88,18 +23,13 @@ body,
 }
 
 #main {
-  display: flex;
-  flex-direction: column;
   width: 100%;
   height: 100%;
-  background-image: url("../src/assets/background.webp");
-  background-size: cover;
-  position: absolute;
 }
 
-#top {
+#middle {
   width: 100%;
-  height: 8%;
+  height: 40%;
   background-color: transparent;
   display: flex;
   flex-direction: row;
