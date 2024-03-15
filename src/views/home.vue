@@ -20,17 +20,17 @@
             </div>
         </div>
         <div id="homeButtom">
-            <router-view v-slot="{ Component }">
-                <transition name="scale" mode="out-in">
-                    <component :is="Component" />
-                </transition>
-            </router-view>
+           <commodity v-if="select == 0" />
         </div>
         <el-backtop :right="100" :bottom="100" />
     </div>
 </template>
 <script lang="ts" setup>
+import {ref} from 'vue'
 import { Search } from '@element-plus/icons-vue'
+import commodity from '../components/commodity.vue'
+
+const select = ref<number>(0)
 
 const handleSelect = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
@@ -42,6 +42,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
     height: 100%;
     display: flex;
     flex-direction: column;
+    background-image: url('../src/assets/background.png');
     /* background-color: #DDD; */
 }
 
@@ -51,9 +52,9 @@ const handleSelect = (key: string, keyPath: string[]) => {
     display: flex;
     margin-left: 3.5em;
     flex-direction: row;
-    background-color: white;
+    /* background-color: white; */
     justify-content: space-between;
-    box-shadow: 5px 5px 5px #eee;
+    /* box-shadow: 5px 5px 5px #eee; */
     padding: 1em 0.8em;
     border-radius: 5px;
     margin-bottom: 2em;
@@ -65,9 +66,9 @@ const handleSelect = (key: string, keyPath: string[]) => {
     display: flex;
     margin-left: 3.5em;
     flex-direction: row;
-    background-color: white;
+    /* background-color: white; */
     justify-content: space-between;
-    box-shadow: 5px 5px 5px #eee;
+    /* box-shadow: 5px 5px 5px #eee; */
     padding: 1em 0.8em;
     border-radius: 5px;
 }

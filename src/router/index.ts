@@ -13,26 +13,6 @@ const routes: Array<RouteRecordRaw> = [
         name: 'home',
         component: () => import('../views/home.vue')
     },
-    {
-        path: '/experience',
-        name: 'experience',
-        component: () => import('../views/experience.vue')
-    },
-    {
-        path: '/profile',
-        name: 'profile',
-        component: () => import('../views/profile.vue')
-    },
-    {
-        path: '/skill',
-        name: 'skill',
-        component: () => import('../views/skill.vue')
-    },
-    {
-        path: '/work',
-        name: 'work',
-        component: () => import('../views/work.vue')
-    }
 ]
 
 const router = createRouter({
