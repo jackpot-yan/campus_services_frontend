@@ -102,7 +102,7 @@ const registerSuccess = () => {
   registerDialog.value = true
 }
 const loginSuccess = () => {
-  if (loginFrom.passWord === '' || loginFrom.userName === '') {
+  if (loginFrom.password === '' || loginFrom.userName === '') {
     alert('缺少关键字段填写!')
   } else {
     login(loginFrom).then(res => {
