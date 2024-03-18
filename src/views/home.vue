@@ -62,7 +62,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
 
 #homeButtom {
     width: 90%;
-    height: 100%;
+    height: 80%;
     display: flex;
     margin-left: 3.5em;
     flex-direction: row;

@@ -6,11 +6,11 @@
     <div id="buttom">
       <div id="loginInfo">
         <el-form :model="loginFrom" label-position="left" label-width="auto" style="margin: 10%;">
-          <el-form-item label="学生证号">
-            <el-input></el-input>
+          <el-form-item :label="idType">
+            <el-input v-model="loginFrom.userName"></el-input>
           </el-form-item>
           <el-form-item label="密码">
-            <el-input></el-input>
+            <el-input type="password" v-model="loginFrom.password"></el-input>
           </el-form-item>
           <el-form-item>
             <el-link type="primary" style="margin-right: 50%;" @click="typeChange">{{ loginType }}</el-link>
@@ -18,7 +18,7 @@
           </el-form-item>
           <el-form-item>
             <el-button style="margin-right: 20%;margin-left: 20%;" type="primary" @click="loginSuccess">登录</el-button>
-            <el-button>注册</el-button>
+            <el-button @click="registerSuccess">注册</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -27,15 +27,40 @@
   <el-dialog v-model="forgetPasswordDialog" style="width: 40%;">
     <div style="margin-bottom: 10%;">如您忘记密码,可<el-link type="primary">点击此处</el-link>修改密码</div>
   </el-dialog>
+  <el-dialog v-model="registerDialog" style="width: 40%;">
+    <el-form :model="registerFrom" label-position="left" label-width="auto" max-width="40%">
+      <el-form-item label="学生证号">
+        <el-input v-model="registerFrom.id" />
+      </el-form-item>
+      <el-form-item label="昵称">
+        <el-input v-model="registerFrom.userName" />
+      </el-form-item>
+      <el-form-item label="密码">
+        <el-input type="password" v-model="registerFrom.password" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="registerEvent">注册</el-button>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
 </template>
 <script lang="ts" setup>
 import { reactive, ref } from "vue"
 import { useRouter } from 'vue-router'
+import { register, login } from '../api/user.js'
 
 const loginFrom = reactive({
   userName: '',
-  passWord: ''
+  password: ''
 })
+const registerDialog = ref<boolean>(false)
+const registerFrom = reactive({
+  userName: '',
+  id: '',
+  password: '',
+  userType: 0
+})
+const idType = ref<string>('学生证号')
 const route = useRouter()
 const loginType = ref<string>('管理员登录')
 const loginTypeCode = ref<number>(0)
@@ -43,19 +68,57 @@ const forgetPasswordDialog = ref<boolean>(false)
 const typeChange = () => {
   if (loginType.value == '管理员登录') {
     loginType.value = "普通用户登录"
+    idType.value = '管理员ID'
     loginTypeCode.value = 0
   } else {
     loginType.value = '管理员登录'
+    idType.value = '学生证号'
     loginTypeCode.value = 1
+  }
+}
+const registerEvent = () => {
+  if (registerFrom.id === '' || registerFrom.userName === '' || registerFrom.password === '') {
+    alert('关键字段为空')
+  } else {
+    register(registerFrom).then(res => {
+      const {code, msg} = res.data
+      if (code != 0) {
+        alert(msg)
+      } else {
+        alert('注册成功!')
+        route.replace({
+          path: '/home'
+        })
+      }
+    }).catch(err => {
+      alert(err)
+    })
   }
 }
 const forgetPassword = () => {
   forgetPasswordDialog.value = true
 }
+const registerSuccess = () => {
+  registerDialog.value = true
+}
 const loginSuccess = () => {
-  route.push({
-    path: '/home'
-  })
+  if (loginFrom.passWord === '' || loginFrom.userName === '') {
+    alert('缺少关键字段填写!')
+  } else {
+    login(loginFrom).then(res => {
+      const {msg, code} = res.data
+      if (code != 0) {
+        alert(msg)
+      } else {
+        alert('登录成功!')
+          route.replace({
+            path: '/home'
+          })
+      }
+    }).catch(err => {
+      alert(err)
+    })
+  }
 }
 </script>
 <style>
@@ -96,4 +159,5 @@ const loginSuccess = () => {
   height: 50%;
   background-color: white;
   border-radius: 10px;
-}</style>
+}
+</style>
