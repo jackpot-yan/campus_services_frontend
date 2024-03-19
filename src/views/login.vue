@@ -86,6 +86,7 @@ const registerEvent = () => {
         alert(msg)
       } else {
         alert('注册成功!')
+        localStorage.setItem('id', registerFrom.id)
         route.replace({
           path: '/home'
         })
@@ -111,9 +112,12 @@ const loginSuccess = () => {
         alert(msg)
       } else {
         alert('登录成功!')
+        localStorage.setItem('id', loginFrom.userName)
+        if (loginTypeCode.value === 0) {
           route.replace({
             path: '/home'
           })
+        }
       }
     }).catch(err => {
       alert(err)

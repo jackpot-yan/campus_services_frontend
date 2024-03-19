@@ -7,7 +7,7 @@
     <el-scrollbar>
       <div id="content">
         <div v-for="(index, items) in data" style="max-width: 18%; margin: 1%;">
-          <el-card shadow="hover" @click="details">
+          <el-card shadow="hover" @click="details(index)">
             <img :src="index.png" style="width: 100%;height: 60%;" />
             <p style="text-overflow: ellipsis; color: #666; white-space: nowrap; overflow: hidden;">{{ index.title }}</p>
             <p style="color: #f50;">¥ {{ index.price }}</p>
@@ -22,8 +22,11 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import jsonData from '../../src/assets/data.json'
+import { useRouter } from 'vue-router'
+import { addHistroy } from '../api/user.js'
 
 const data = ref()
+const route = useRouter()
 
 const timeSort = () => {
   data.value.sort((a, b) => {
@@ -37,8 +40,19 @@ const saleSort = () => {
   })
 }
 
-const details = () => {
-  console.log('跳转详情')
+const details = (index) => {
+  if (!localStorage.getItem('history')) {
+    localStorage.setItem('history', String(index.comm))
+  } else {
+    const history = localStorage.getItem('history')
+    localStorage.setItem('history', history + ',' + String(index.comm))
+  }
+  const comm = localStorage.getItem('history')
+  localStorage.setItem('details', JSON.stringify(index))
+  addHistroy({'id': localStorage.getItem('id'), 'comm': comm})
+  route.push({
+    path: '/details',
+  })
 }
 onMounted(() => {
   data.value = jsonData.data
