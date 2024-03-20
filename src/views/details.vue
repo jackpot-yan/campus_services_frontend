@@ -9,8 +9,8 @@
                 <img :src="info.png" style="width: 400px; height: 550px; margin-left: 3%;" />
             </div>
             <div style="margin-left: 20px; display: flex; flex-direction: column;">
-                <h1 style="font-size: 20px; font-family: 'PingFang SC';">{{ info.title }}</h1>
-                <div>
+                <h1 style="font-size: 20px; font-family: 'PingFang SC'; color: black;">{{ info.title }}</h1>
+                <div style="color: black;">
                     {{ info.describe }}
                 </div>
                 <div>

@@ -15,7 +15,7 @@
                     text-color="#black" active-text-color="blue" :ellipsis="false">
                     <el-menu-item index="1">我要出售</el-menu-item>
                     <el-menu-item index="2">兼职相关</el-menu-item>
-                    <el-menu-item index="3">个人中心</el-menu-item>
+                    <el-menu-item index="3" @click="jumpPre">个人中心</el-menu-item>
                 </el-menu>
             </div>
         </div>
@@ -27,13 +27,20 @@
 </template>
 <script lang="ts" setup>
 import {ref} from 'vue'
+import { useRouter } from 'vue-router';
 import { Search } from '@element-plus/icons-vue'
 import commodity from '../components/commodity.vue'
 
 const select = ref<number>(0)
+const route = useRouter()
 
 const handleSelect = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
+}
+const jumpPre = () => {
+    route.push({
+        path: '/center'
+    })
 }
 </script>
 <style scoped>
