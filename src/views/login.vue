@@ -7,7 +7,7 @@
       <div id="loginInfo">
         <el-form :model="loginFrom" label-position="left" label-width="auto" style="margin: 10%;">
           <el-form-item :label="idType">
-            <el-input v-model="loginFrom.userName"></el-input>
+            <el-input v-model="loginFrom.id"></el-input>
           </el-form-item>
           <el-form-item label="密码">
             <el-input type="password" v-model="loginFrom.password"></el-input>
@@ -50,8 +50,9 @@ import { useRouter } from 'vue-router'
 import { register, login } from '../api/user.js'
 
 const loginFrom = reactive({
-  userName: '',
-  password: ''
+  id: '',
+  password: '',
+  userType: 0
 })
 const registerDialog = ref<boolean>(false)
 const registerFrom = reactive({
@@ -81,7 +82,7 @@ const registerEvent = () => {
     alert('关键字段为空')
   } else {
     register(registerFrom).then(res => {
-      const {code, msg} = res.data
+      const { code, msg } = res.data
       if (code != 0) {
         alert(msg)
       } else {
@@ -103,16 +104,17 @@ const registerSuccess = () => {
   registerDialog.value = true
 }
 const loginSuccess = () => {
-  if (loginFrom.password === '' || loginFrom.userName === '') {
+  if (loginFrom.password === '' || loginFrom.id === '') {
     alert('缺少关键字段填写!')
   } else {
+    loginFrom.userType = loginTypeCode.value
     login(loginFrom).then(res => {
-      const {msg, code} = res.data
+      const { msg, code } = res.data
       if (code != 0) {
         alert(msg)
       } else {
         alert('登录成功!')
-        localStorage.setItem('id', loginFrom.userName)
+        localStorage.setItem('id', loginFrom.id)
         if (loginTypeCode.value === 0) {
           route.replace({
             path: '/home'

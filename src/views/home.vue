@@ -7,9 +7,6 @@
             <div style="margin-top: 1%;font-size: x-large;">
                 欢迎来到校园服务门户!
             </div>
-            <div style="margin-top: 1%;">
-                <el-input style="width: 400px;" :prefix-icon="Search"></el-input>
-            </div>
             <div>
                 <el-menu style="max-width: 2000px" :default-active="0" mode="horizontal" @select="handleSelect"
                     text-color="#black" active-text-color="blue" :ellipsis="false">
@@ -28,12 +25,10 @@
 <script lang="ts" setup>
 import {ref} from 'vue'
 import { useRouter } from 'vue-router';
-import { Search } from '@element-plus/icons-vue'
 import commodity from '../components/commodity.vue'
 
 const select = ref<number>(0)
 const route = useRouter()
-
 const handleSelect = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
 }
