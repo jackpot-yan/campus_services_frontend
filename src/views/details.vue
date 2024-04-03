@@ -56,7 +56,7 @@
                 <img style="width: 80%; height: 80%" src="../assets/QR.png" />
             </el-form-item>
             <el-form-item>
-                <el-button @click="finishBuy">完成</el-button>
+                <el-button @click="finishBuy()">完成</el-button>
             </el-form-item>
         </el-form>
     </el-dialog>
@@ -66,6 +66,7 @@ import { onBeforeMount, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getAddress } from '../api/address.js'
 import { ElMessage } from 'element-plus'
+import {addNewBuy} from '../api/buyInfo.js'
 const route = useRouter()
 const info = ref()
 const num = ref<number>(1)
@@ -90,10 +91,14 @@ const buy = () => {
     buyDialog.value = true
 }
 const finishBuy = () => {
-    buyDialog.value = false
+  const body = {'name': info.value.title, 'idCard': localStorage.getItem('idCard'), 'num': num.value, 'total': price.value}
+  console.log(body)
+  addNewBuy(body).then(res => {
     ElMessage({
-    message: '购买完成',
-    type: 'success',
+      message: '购买完成',
+      type: 'success',
+    })
+    buyDialog.value = false
   })
 }
 onBeforeMount(() => {
@@ -105,7 +110,7 @@ onBeforeMount(() => {
 })
 
 onMounted(async () => {
-    const idCard = localStorage.getItem('id')
+    const idCard = localStorage.getItem('idCard')
     await getAddress(idCard).then(res => {
         let cityList = new Array
         if (res.data.length == 0) {
@@ -118,7 +123,6 @@ onMounted(async () => {
                 cityList.push({ 'value': item.city + '-' + String(item.phone) + '-' + item.name, 'label': item.city + '-' + String(item.phone) + '-' + item.name })
             })
         }
-        console.log(cityList)
         addressList.value = cityList
     })
 })

@@ -8,10 +8,10 @@
                 欢迎来到校园服务门户!
             </div>
             <div>
-                <el-menu style="max-width: 2000px" :default-active="0" mode="horizontal" @select="handleSelect"
+                <el-menu style="max-width: 2000px" default-active="0" mode="horizontal" @select="handleSelect"
                     text-color="#black" active-text-color="blue" :ellipsis="false">
-                    <el-menu-item index="1">我要出售</el-menu-item>
-                    <el-menu-item index="2">兼职相关</el-menu-item>
+                    <el-menu-item index="1" @click="route.push({'path': '/commod'})">我要出售</el-menu-item>
+                    <el-menu-item index="2" @click="route.push({'path': '/part'})">兼职相关</el-menu-item>
                     <el-menu-item index="3" @click="jumpPre">个人中心</el-menu-item>
                 </el-menu>
             </div>

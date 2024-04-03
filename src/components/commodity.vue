@@ -72,7 +72,7 @@ const details = (index) => {
   }
   const comm = localStorage.getItem('history')
   localStorage.setItem('details', JSON.stringify(index))
-  addHistroy({ 'id': localStorage.getItem('id'), 'comm': comm })
+  addHistroy({ 'id': localStorage.getItem('idCard'), 'comm': comm })
   route.push({
     path: '/details',
   })

@@ -25,18 +25,21 @@
     </div>
   </div>
   <el-dialog v-model="forgetPasswordDialog" style="width: 40%;">
-    <div style="margin-bottom: 10%;">如您忘记密码,可<el-link type="primary">点击此处</el-link>修改密码</div>
+    <div style="margin-bottom: 10%;">如您忘记密码,可
+      <el-link type="primary">点击此处</el-link>
+      修改密码
+    </div>
   </el-dialog>
   <el-dialog v-model="registerDialog" style="width: 40%;">
     <el-form :model="registerFrom" label-position="left" label-width="auto" max-width="40%">
       <el-form-item label="学生证号">
-        <el-input v-model="registerFrom.id" />
+        <el-input v-model="registerFrom.id"/>
       </el-form-item>
       <el-form-item label="昵称">
-        <el-input v-model="registerFrom.userName" />
+        <el-input v-model="registerFrom.userName"/>
       </el-form-item>
       <el-form-item label="密码">
-        <el-input type="password" v-model="registerFrom.password" />
+        <el-input type="password" v-model="registerFrom.password"/>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="registerEvent">注册</el-button>
@@ -45,9 +48,10 @@
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { reactive, ref } from "vue"
-import { useRouter } from 'vue-router'
-import { register, login } from '../api/user.js'
+import {reactive, ref} from "vue"
+import {useRouter} from 'vue-router'
+import {register, login} from '../api/user.js'
+import {ElMessage} from "element-plus";
 
 const loginFrom = reactive({
   id: '',
@@ -70,11 +74,11 @@ const typeChange = () => {
   if (loginType.value == '管理员登录') {
     loginType.value = "普通用户登录"
     idType.value = '管理员ID'
-    loginTypeCode.value = 0
+    loginTypeCode.value = 1
   } else {
     loginType.value = '管理员登录'
     idType.value = '学生证号'
-    loginTypeCode.value = 1
+    loginTypeCode.value = 0
   }
 }
 const registerEvent = () => {
@@ -82,12 +86,12 @@ const registerEvent = () => {
     alert('关键字段为空')
   } else {
     register(registerFrom).then(res => {
-      const { code, msg } = res.data
+      const {code, msg} = res.data
       if (code != 0) {
         alert(msg)
       } else {
         alert('注册成功!')
-        localStorage.setItem('id', registerFrom.id)
+        localStorage.setItem('idCard', registerFrom.id)
         route.replace({
           path: '/home'
         })
@@ -108,22 +112,33 @@ const loginSuccess = () => {
     alert('缺少关键字段填写!')
   } else {
     loginFrom.userType = loginTypeCode.value
-    login(loginFrom).then(res => {
-      const { msg, code } = res.data
-      if (code != 0) {
-        alert(msg)
-      } else {
-        alert('登录成功!')
-        localStorage.setItem('id', loginFrom.id)
-        if (loginTypeCode.value === 0) {
-          route.replace({
-            path: '/home'
-          })
+    if (loginFrom.userType === 1) {
+      login(loginFrom).then(res => {
+        const {msg, code} = res.data
+        if (code == 0) {
+          route.push('/admin')
+        } else {
+          ElMessage.error(msg)
         }
-      }
-    }).catch(err => {
-      alert(err)
-    })
+      })
+    } else {
+      login(loginFrom).then(res => {
+        const {msg, code} = res.data
+        if (code != 0) {
+          alert(msg)
+        } else {
+          alert('登录成功!')
+          localStorage.setItem('idCard', loginFrom.id)
+          if (loginTypeCode.value === 0) {
+            route.replace({
+              path: '/home'
+            })
+          }
+        }
+      }).catch(err => {
+        alert(err)
+      })
+    }
   }
 }
 </script>

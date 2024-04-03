@@ -1,13 +1,21 @@
 <template>
   <div id="main">
     <router-view></router-view>
-      <!-- <router-view v-slot="{ Component }">
-        <transition name="scale" mode="out-in">
-          <component :is="Component" />
-        </transition>
-      </router-view> -->
+    <!-- <router-view v-slot="{ Component }">
+      <transition name="scale" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </router-view> -->
   </div>
 </template>
+<script lang="ts" setup>
+import {createAdmin} from './api/user.js'
+import {onMounted} from "vue";
+
+onMounted(() => {
+  createAdmin()
+})
+</script>
 
 
 <style>
