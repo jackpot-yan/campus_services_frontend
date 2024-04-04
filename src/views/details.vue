@@ -6,12 +6,12 @@
         </div>
         <div id="detailsContent">
             <div>
-                <img :src="info.png" style="width: 400px; height: 550px; margin-left: 3%;" />
+                <img :src="info.page" style="width: 400px; height: 550px; margin-left: 3%;" />
             </div>
             <div style="margin-left: 20px; display: flex; flex-direction: column;">
                 <h1 style="font-size: 20px; font-family: 'PingFang SC'; color: black;">{{ info.title }}</h1>
                 <div style="color: black;">
-                    {{ info.describe }}
+                    {{ info.introduce }}
                 </div>
                 <div>
                     <span style="color: rgb(255, 79, 0);">¥</span>
@@ -82,9 +82,12 @@ const retrunHome = () => {
 }
 const numberChange = () => {
     if (num.value != 1) {
-        const unit = parseFloat(info.value.price)
+        const unit = parseFloat(info.value.single)
         const total = unit * num.value
         price.value = String(total)
+    }
+    if (num.value == 1) {
+      price.value = info.value.single
     }
 }
 const buy = () => {
@@ -105,7 +108,7 @@ onBeforeMount(() => {
     const data = localStorage.getItem('details')
     if (data != null) {
         info.value = JSON.parse(data)
-        price.value = info.value.price
+        price.value = info.value.single
     }
 })
 

@@ -6,19 +6,19 @@
         <el-input v-model="search" clearable type="primary" style="width: 300px; height: 35px;" :prefix-icon="Search"
           @change="searchCommod"></el-input>
       </div>
-      <div><el-link @clik="timeSort">最新上架</el-link></div>
+      <div><el-link @click="timeSort">最新上架</el-link></div>
       <div><el-link @click="saleSort">价格排序</el-link></div>
     </div>
     <el-scrollbar>
       <div id="content">
         <div v-for="(index, items) in data" style="max-width: 18%; margin: 1%;">
           <el-card shadow="hover" @click="details(index)">
-            <img :src="index.png" style="width: 100%;height: 60%;" />
+            <img :src="index.page" style="width: 100%;height: 60%;" />
             <p style="text-overflow: ellipsis; color: #666; white-space: nowrap; overflow: hidden;">{{ index.title }}
             </p>
-            <p style="color: #f50;">¥ {{ index.price }}</p>
-            <p>销量: <span style="color: #f50;">{{ index.sales }}</span></p>
-            <p>上架时间: <span style="color: #f50;">{{ index.add_time }}</span></p>
+            <p style="color: #f50;">¥ {{ index.single }}</p>
+            <p>库存: <span style="color: #f50;">{{ index.stock }}</span></p>
+            <p>上架时间: <span style="color: #f50;">{{ index.addTime }}</span></p>
           </el-card>
         </div>
       </div>
@@ -27,10 +27,10 @@
 </template>
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import jsonData from '../../src/assets/data.json'
 import { useRouter } from 'vue-router'
 import { addHistroy } from '../api/user.js'
 import { Search } from '@element-plus/icons-vue'
+import {getHomeData} from '../api/commod.js'
 
 const data = ref()
 const backup = ref()
@@ -40,7 +40,7 @@ const search = ref<string>()
 
 const timeSort = () => {
   data.value.sort((a, b) => {
-    return Date.parse(a.add_time) < Date.parse(b.add_time)
+    return a.add_time > b.add_time ? -1:1
   })
 }
 
@@ -65,21 +65,24 @@ const searchCommod = () => {
 
 const details = (index) => {
   if (!localStorage.getItem('history')) {
-    localStorage.setItem('history', String(index.comm))
+    localStorage.setItem('history', String(index.id))
   } else {
     const history = localStorage.getItem('history')
-    localStorage.setItem('history', history + ',' + String(index.comm))
+    localStorage.setItem('history', history + ',' + String(index.id))
   }
-  const comm = localStorage.getItem('history')
+  const id = localStorage.getItem('history')
+  console.log(id)
   localStorage.setItem('details', JSON.stringify(index))
-  addHistroy({ 'id': localStorage.getItem('idCard'), 'comm': comm })
+  addHistroy({ 'id': localStorage.getItem('idCard'), 'comm': id })
   route.push({
     path: '/details',
   })
 }
 onMounted(() => {
-  data.value = jsonData.data
-  backup.value = jsonData.data
+  getHomeData().then(res => {
+    data.value = res.data
+    backup.value = res.data
+  })
 })
 </script>
 <style scoped>

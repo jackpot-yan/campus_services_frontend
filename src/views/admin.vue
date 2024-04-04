@@ -64,6 +64,9 @@
             <div v-if="scope.row.state == 2">
               <el-tag type="warning">已退回</el-tag>
             </div>
+            <div v-if="scope.row.state == 6">
+              <el-tag>兼职已完成</el-tag>
+            </div>
           </template>
         </el-table-column>
       </el-table>

@@ -48,10 +48,12 @@
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import {reactive, ref} from "vue"
+import {reactive, ref, onMounted} from "vue"
 import {useRouter} from 'vue-router'
 import {register, login} from '../api/user.js'
 import {ElMessage} from "element-plus";
+import {writeBase} from '../api/commod.js'
+import baseData from '../assets/data.json'
 
 const loginFrom = reactive({
   id: '',
@@ -141,6 +143,11 @@ const loginSuccess = () => {
     }
   }
 }
+
+onMounted(async () => {
+  const payload = {'data': baseData.data}
+  await writeBase(payload)
+})
 </script>
 <style>
 #login {

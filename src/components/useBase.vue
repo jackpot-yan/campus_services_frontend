@@ -27,16 +27,26 @@
     <div id="infoContent">
       <el-form v-if="showCode === '1'" :model="baseInfo">
         <el-form-item label="昵称:">
-          <span style="color: black;">{{ baseInfo.userName }}</span>
-          <!-- <span>{{ baseInfo.userName }}</span> -->
-          <el-link style="margin-left: 30%;">修改</el-link>
+          <span v-if="modifyName == false" style="color: black;">{{ baseInfo.userName }}</span>
+          <el-input style="width: 300px" v-if="modifyName == true" :placeholder="baseInfo.userName"
+                    v-model="modifyUserName"></el-input>
+          <el-link v-if="modifyName == false" style="margin-left: 30%;" @click="modifyTrue">修改</el-link>
+          <el-button style="margin-left: 20px" v-if="modifyName == true" @click="pushModifyName">确定</el-button>
+          <el-button style="margin-left: 20px" v-if="modifyName == true" @click="cancelModify" type="warning">取消
+          </el-button>
         </el-form-item>
         <el-form-item label="绑定学号">
           <span style="color: black;">{{ baseInfo.idCard }}</span>
         </el-form-item>
         <el-form-item label="绑定电话">
-          <span style="color: black">{{ baseInfo.phone }}</span>
-          <el-link style="margin-left: 30%;">修改</el-link>
+          <span v-if="modifyPhone == false" style="color: black">{{ baseInfo.phone }}</span>
+          <el-input style="width: 300px" v-if="modifyPhone == true" :placeholder="baseInfo.phone"
+                    v-model="modifyUserPhone"></el-input>
+          <el-link v-if="modifyPhone == false" style="margin-left: 30%;" @click="modifyPhoneTrue">修改</el-link>
+          <el-button style="margin-left: 20px" v-if="modifyPhone == true" @click="pushModifyPhone">确定</el-button>
+          <el-button style="margin-left: 20px" v-if="modifyPhone == true" @click="cancelModifyPhone" type="warning">
+            取消
+          </el-button>
         </el-form-item>
         <el-form-item label="收货地址">
           <el-select v-model="defaultAddress" :disabled="addressNo" placeholder="您还没有默认收货地址"
@@ -50,11 +60,11 @@
       <el-table v-if="showCode === '3'" :data="historyData" stripe style="width: 100%" max-height="600">
         <el-table-column>
           <template #default="scope">
-            <img :src="scope.row.png"/>
+            <img :src="scope.row.page"/>
           </template>
         </el-table-column>
         <el-table-column prop="title" label="名称" width="180"/>
-        <el-table-column prop="price" label="单价" width="180"/>
+        <el-table-column prop="single" label="单价" width="180"/>
         <el-table-column>
           <template #default="scope">
             <el-link @click="jumpCommod(scope.row)">跳转对应链接</el-link>
@@ -135,17 +145,20 @@
 <script lang="ts" setup>
 import {reactive, ref, onMounted} from "vue"
 import {useRouter} from 'vue-router'
-import {getBaseInfo} from '../api/user.js'
-import jsonData from '../../src/assets/data.json'
+import {getBaseInfo, modifyUserInfo} from '../api/user.js'
 import city from '../../src/assets/city.json'
 import {addNewAddress, getAddress} from '../api/address.js'
 import {getBuyHistory} from '../api/buyInfo.js'
-import {getSell} from '../api/commod.js'
+import {getSell, getHistoryData} from '../api/commod.js'
 import {getPartInfo, getAccept, changePart} from '../api/part.js'
 import {ElMessage} from "element-plus";
 
 const route = useRouter()
 const cityData = ref()
+const modifyName = ref<boolean>(false)
+const modifyUserName = ref<string>('')
+const modifyPhone = ref<boolean>(false)
+const modifyUserPhone = ref<string>('')
 const baseInfo = reactive({
   userName: '',
   idCard: '',
@@ -169,6 +182,40 @@ const historyData = ref()
 const addressNo = ref<boolean>(false)
 const showContent = (index) => {
   showCode.value = index
+}
+
+const modifyTrue = () => {
+  modifyUserName.value = ''
+  modifyName.value = true
+}
+
+const modifyPhoneTrue = () => {
+  modifyUserPhone.value = ''
+  modifyPhone.value = true
+}
+
+const cancelModify = () => {
+  modifyName.value = false
+}
+
+const cancelModifyPhone = () => {
+  modifyPhone.value = false
+}
+
+const pushModifyPhone = () => {
+  const idCard = localStorage.getItem('idCard')
+  const payload = {'idCard': idCard, 'modify': 'phone', 'modifyValue': parseInt(modifyUserPhone.value)}
+  modifyUserInfo(payload).then(res => {
+    ElMessage.success('修改成功,请刷新查看')
+  })
+}
+
+const pushModifyName = () => {
+  const idCard = localStorage.getItem('idCard')
+  const payload = {'idCard': idCard, 'modify': 'name', 'modifyValue': modifyUserName.value}
+  modifyUserInfo(payload).then(res => {
+    ElMessage.success('修改成功,请刷新查看')
+  })
 }
 const jumpCommod = (item) => {
   localStorage.setItem('details', JSON.stringify(item))
@@ -229,7 +276,8 @@ const newAddress = () => {
 }
 onMounted(async () => {
   const idCard = localStorage.getItem('idCard')
-  var data = new Array
+  let data = []
+  let historyList = []
   await getBaseInfo(idCard).then(res => {
     baseInfo.userName = res.data.name
     baseInfo.idCard = res.data.idCard
@@ -238,13 +286,11 @@ onMounted(async () => {
     history.sort(function (a, b) {
       return a - b
     })
-    history.forEach((items, _) => {
-      jsonData.data.forEach((item, _) => {
-        if (String(item.comm) === String(items)) {
-          data.push(item)
-        }
-      })
-    })
+    historyList = history
+  })
+  const payload = {'historyList': historyList}
+  await getHistoryData(payload).then(res => {
+    data = res.data.msg
   })
   await getAddress(idCard).then(res => {
     let cityList = []
