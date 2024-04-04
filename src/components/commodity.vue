@@ -40,13 +40,13 @@ const search = ref<string>()
 
 const timeSort = () => {
   data.value.sort((a, b) => {
-    return a.add_time > b.add_time ? -1:1
+    return Date.parse(b.addTime) - Date.parse(a.addTime)
   })
 }
 
 const saleSort = () => {
   data.value.sort((a, b) => {
-    return parseFloat(a.price) < parseFloat(b.price) ? -1 : 1
+    return parseFloat(a.single) - parseFloat(b.single)
   })
 }
 
