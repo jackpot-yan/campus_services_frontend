@@ -21,14 +21,16 @@
         </el-descriptions-item
         >
       </el-descriptions>
-      <div style="margin-top: 10px;margin-left: 10px">
+      <div style="margin-top: 10px">
         <el-menu style="display: flex; justify-content: start; width: 50%; height: 95%;" default-active="1"
                  class="el-menu-demo" mode="horizontal" @select="handleSelect">
           <el-menu-item index="1">待审核商品</el-menu-item>
           <el-menu-item index="2">待审核兼职</el-menu-item>
+          <el-menu-item index="3">已审核商品</el-menu-item>
+          <el-menu-item index="4">已审核兼职</el-menu-item>
         </el-menu>
       </div>
-      <el-table v-if="showCode == '1'" :data="sellData" stripe style="width: 100%" max-height="600">
+      <el-table v-if="showCode == '1'" :data="notSellData" stripe style="width: 100%" max-height="600">
         <el-table-column label="商品名称" prop="title"/>
         <el-table-column prop="addTime" label="上架时间"/>
         <el-table-column label="上架人ID" prop="idCard"/>
@@ -47,7 +49,49 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-table v-if="showCode == '2'" :data="partData" stripe style="width: 100%" max-height="600">
+      <el-table v-if="showCode == '2'" :data="notPartData" stripe style="width: 100%" max-height="600">
+        <el-table-column label="兼职标题" prop="name"/>
+        <el-table-column label="佣金" prop="commission"/>
+        <el-table-column label="工作地点" prop="local"/>
+        <el-table-column label="上架人ID" prop="idCard"/>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <div v-if="scope.row.state == 0">
+              <el-button @click="successPart(scope.row.id)">通过</el-button>
+              <el-button type="danger" @click="errorPart(scope.row.id)">退回</el-button>
+            </div>
+            <div v-if="scope.row.state == 1">
+              <el-tag type="success">已通过</el-tag>
+            </div>
+            <div v-if="scope.row.state == 2">
+              <el-tag type="warning">已退回</el-tag>
+            </div>
+            <div v-if="scope.row.state == 6">
+              <el-tag>兼职已完成</el-tag>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-table v-if="showCode == '3'" :data="sellData" stripe style="width: 100%" max-height="600">
+        <el-table-column label="商品名称" prop="title"/>
+        <el-table-column prop="addTime" label="上架时间"/>
+        <el-table-column label="上架人ID" prop="idCard"/>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <div v-if="scope.row.state == 0">
+              <el-button @click="successSell(scope.row.id)">通过</el-button>
+              <el-button type="danger" @click="errorSell(scope.row.id)">退回</el-button>
+            </div>
+            <div v-if="scope.row.state == 1">
+              <el-tag type="success">已通过</el-tag>
+            </div>
+            <div v-if="scope.row.state == 2">
+              <el-tag type="warning">已退回</el-tag>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-table v-if="showCode == '4'" :data="partData" stripe style="width: 100%" max-height="600">
         <el-table-column label="兼职标题" prop="name"/>
         <el-table-column label="佣金" prop="commission"/>
         <el-table-column label="工作地点" prop="local"/>
@@ -81,6 +125,8 @@ import {getPart, changePart} from '../api/part.js'
 const showCode = ref<string>('1')
 const sellData = ref<any[]>([])
 const partData = ref<any[]>([])
+const notSellData = ref<any[]>([])
+const notPartData = ref<any[]>([])
 
 const handleSelect = (key) => {
   showCode.value = key
@@ -124,10 +170,22 @@ const errorPart = (row) => {
 
 onMounted(() => {
   getAllSell().then(res => {
-    sellData.value = res.data
+    res.data.forEach((item, _) => {
+      if (item.state == 1) {
+        sellData.value.push(item)
+      } else {
+        notSellData.value.push(item)
+      }
+    })
   })
   getPart(5).then(res => {
-    partData.value = res.data
+    res.data.forEach((item, _) => {
+      if (item.state == 0) {
+        notPartData.value.push(item)
+      } else {
+        partData.value.push(item)
+      }
+    })
   })
 })
 </script>

@@ -22,6 +22,7 @@
           <el-menu-item index="4-1">任务目录</el-menu-item>
           <el-menu-item index="4-2">已发布任务</el-menu-item>
         </el-sub-menu>
+        <el-menu-item index="5">商品收藏</el-menu-item>
       </el-menu>
     </div>
     <div id="infoContent">
@@ -75,6 +76,11 @@
         <el-table-column label="商品名称" prop="name"/>
         <el-table-column prop="time" label="购买时间"/>
         <el-table-column label="购买数量" prop="num"/>
+        <el-table-column>
+          <template #default="scope">
+            <el-button type="danger" @click="removeHistory(scope.row)">删除记录</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <el-table v-if="showCode == '2-2'" :data="sellData" stripe style="width: 100%" max-height="600">
         <el-table-column label="商品名称" prop="title"/>
@@ -114,6 +120,15 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-table v-if="showCode == '5'" :data="collectData" stripe style="width: 100%" max-height="600">
+        <el-table-column label="商品名称" prop="title"/>
+        <el-table-column prop="stock" label="库存"/>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <el-button type="warning" @click="deleteCollect(scope.row)">移出收藏</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
   </div>
   <el-dialog v-model="addresDialog" center width="50%" height="30%" label-position="left" label-width="auto">
@@ -148,10 +163,11 @@ import {useRouter} from 'vue-router'
 import {getBaseInfo, modifyUserInfo} from '../api/user.js'
 import city from '../../src/assets/city.json'
 import {addNewAddress, getAddress} from '../api/address.js'
-import {getBuyHistory} from '../api/buyInfo.js'
+import {getBuyHistory, deleteBuyHistory} from '../api/buyInfo.js'
 import {getSell, getHistoryData} from '../api/commod.js'
 import {getPartInfo, getAccept, changePart} from '../api/part.js'
 import {ElMessage} from "element-plus";
+import {getCollect, removeCollect} from '../api/collect.js'
 
 const route = useRouter()
 const cityData = ref()
@@ -172,6 +188,7 @@ const addressForm = reactive({
   street: ''
 })
 const releasePartData = ref<any[]>([])
+const collectData = ref<any[]>([])
 const buyData = ref<any[]>([])
 const partData = ref<any[]>([])
 const addresDialog = ref<boolean>(false)
@@ -184,6 +201,15 @@ const showContent = (index) => {
   showCode.value = index
 }
 
+const removeHistory = (row) => {
+  deleteBuyHistory(row.id).then(res => {
+    ElMessage.success('删除成功')
+    getBuyHistory(idCard).then(res => {
+      buyData.value = res.data
+    })
+  })
+}
+
 const modifyTrue = () => {
   modifyUserName.value = ''
   modifyName.value = true
@@ -192,6 +218,17 @@ const modifyTrue = () => {
 const modifyPhoneTrue = () => {
   modifyUserPhone.value = ''
   modifyPhone.value = true
+}
+
+const deleteCollect = (row) => {
+  const idCard = localStorage.getItem('idCard')
+  const payload = {'idCard': idCard, 'partId': row.id}
+  removeCollect(payload).then(res => {
+    ElMessage('删除收藏')
+    getCollect(idCard).then(res => {
+      collectData.value = res.data
+    })
+  })
 }
 
 const cancelModify = () => {
@@ -347,6 +384,9 @@ onMounted(async () => {
   })
   await getAccept(idCard).then(res => {
     partData.value = res.data
+  })
+  await getCollect(idCard).then(res => {
+    collectData.value = res.data
   })
 })
 </script>
