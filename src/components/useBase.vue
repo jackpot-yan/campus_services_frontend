@@ -30,7 +30,7 @@
         <el-form-item label="昵称:">
           <span v-if="modifyName == false" style="color: black;">{{ baseInfo.userName }}</span>
           <el-input style="width: 300px" v-if="modifyName == true" :placeholder="baseInfo.userName"
-                    v-model="modifyUserName"></el-input>
+            v-model="modifyUserName"></el-input>
           <el-link v-if="modifyName == false" style="margin-left: 30%;" @click="modifyTrue">修改</el-link>
           <el-button style="margin-left: 20px" v-if="modifyName == true" @click="pushModifyName">确定</el-button>
           <el-button style="margin-left: 20px" v-if="modifyName == true" @click="cancelModify" type="warning">取消
@@ -42,7 +42,7 @@
         <el-form-item label="绑定电话">
           <span v-if="modifyPhone == false" style="color: black">{{ baseInfo.phone }}</span>
           <el-input style="width: 300px" v-if="modifyPhone == true" :placeholder="baseInfo.phone"
-                    v-model="modifyUserPhone"></el-input>
+            v-model="modifyUserPhone"></el-input>
           <el-link v-if="modifyPhone == false" style="margin-left: 30%;" @click="modifyPhoneTrue">修改</el-link>
           <el-button style="margin-left: 20px" v-if="modifyPhone == true" @click="pushModifyPhone">确定</el-button>
           <el-button style="margin-left: 20px" v-if="modifyPhone == true" @click="cancelModifyPhone" type="warning">
@@ -50,10 +50,8 @@
           </el-button>
         </el-form-item>
         <el-form-item label="收货地址">
-          <el-select v-model="defaultAddress" :disabled="addressNo" placeholder="您还没有默认收货地址"
-                     style="width: 500px">
-            <el-option v-for="item in addressList" :key="item.value" :label="item.value"
-                       :value="item.value"/>
+          <el-select v-model="defaultAddress" :disabled="addressNo" placeholder="您还没有默认收货地址" style="width: 500px">
+            <el-option v-for="item in addressList" :key="item.value" :label="item.value" :value="item.value" />
           </el-select>
           <el-button style="margin-left: 10%; margin-top: 20px" type="primary" @click="addAddress">新增地址</el-button>
         </el-form-item>
@@ -61,11 +59,11 @@
       <el-table v-if="showCode === '3'" :data="historyData" stripe style="width: 100%" max-height="600">
         <el-table-column>
           <template #default="scope">
-            <img :src="scope.row.page"/>
+            <img :src="scope.row.page" />
           </template>
         </el-table-column>
-        <el-table-column prop="title" label="名称" width="180"/>
-        <el-table-column prop="single" label="单价" width="180"/>
+        <el-table-column prop="title" label="名称" width="180" />
+        <el-table-column prop="single" label="单价" width="180" />
         <el-table-column>
           <template #default="scope">
             <el-link @click="jumpCommod(scope.row)">跳转对应链接</el-link>
@@ -73,18 +71,21 @@
         </el-table-column>
       </el-table>
       <el-table v-if="showCode == '2-1'" :data="buyData" stripe style="width: 100%" max-height="600">
-        <el-table-column label="商品名称" prop="name"/>
-        <el-table-column prop="time" label="购买时间"/>
-        <el-table-column label="购买数量" prop="num"/>
+        <el-table-column label="商品名称" prop="name" />
+        <el-table-column prop="time" label="购买时间" />
+        <el-table-column label="购买数量" prop="num" />
         <el-table-column>
           <template #default="scope">
-            <el-button type="danger" @click="removeHistory(scope.row)">删除记录</el-button>
+            <div style="display: flex; flex-direction: row;;">
+              <el-button type="primary" :icon="Edit" />
+              <el-button type="danger" :icon="Delete" @click="removeHistory(scope.row)" />
+            </div>
           </template>
         </el-table-column>
       </el-table>
       <el-table v-if="showCode == '2-2'" :data="sellData" stripe style="width: 100%" max-height="600">
-        <el-table-column label="商品名称" prop="title"/>
-        <el-table-column prop="addTime" label="上架时间"/>
+        <el-table-column label="商品名称" prop="title" />
+        <el-table-column prop="addTime" label="上架时间" />
         <el-table-column label="当前状态">
           <template #default="scope">
             <el-tag v-if="scope.row.state == 0" type="info">待审核</el-tag>
@@ -94,9 +95,9 @@
         </el-table-column>
       </el-table>
       <el-table v-if="showCode == '4-1'" :data="partData" stripe style="width: 100%" max-height="600">
-        <el-table-column label="任务" prop="name"/>
-        <el-table-column prop="idCard" label="发布者id"/>
-        <el-table-column prop="commission" label="佣金"/>
+        <el-table-column label="任务" prop="name" />
+        <el-table-column prop="idCard" label="发布者id" />
+        <el-table-column prop="commission" label="佣金" />
         <el-table-column label="当前状态">
           <template #default="scope">
             <el-link v-if="scope.row.state == 1" @click="finish(scope.row)">点击结算</el-link>
@@ -107,9 +108,9 @@
         </el-table-column>
       </el-table>
       <el-table v-if="showCode == '4-2'" :data="releasePartData" stripe style="width: 100%" max-height="600">
-        <el-table-column label="任务" prop="name"/>
-        <el-table-column prop="commission" label="佣金"/>
-        <el-table-column label="接取人ID" prop="recipient"/>
+        <el-table-column label="任务" prop="name" />
+        <el-table-column prop="commission" label="佣金" />
+        <el-table-column label="接取人ID" prop="recipient" />
         <el-table-column label="当前状态">
           <template #default="scope">
             <el-tag v-if="scope.row.state == 0">待接取</el-tag>
@@ -121,8 +122,8 @@
         </el-table-column>
       </el-table>
       <el-table v-if="showCode == '5'" :data="collectData" stripe style="width: 100%" max-height="600">
-        <el-table-column label="商品名称" prop="title"/>
-        <el-table-column prop="stock" label="库存"/>
+        <el-table-column label="商品名称" prop="title" />
+        <el-table-column prop="stock" label="库存" />
         <el-table-column label="操作">
           <template #default="scope">
             <el-button type="warning" @click="deleteCollect(scope.row)">移出收藏</el-button>
@@ -145,7 +146,7 @@
         <el-input v-model="addressForm.phone" style="width: 300px;"></el-input>
       </el-form-item>
       <el-form-item label="所在省市区" max-wdith="100px">
-        <el-cascader v-model="addressForm.city" :options="cityData" clearable/>
+        <el-cascader v-model="addressForm.city" :options="cityData" clearable />
       </el-form-item>
       <el-form-item label="具体街道">
         <el-input v-model="addressForm.street"></el-input>
@@ -158,16 +159,18 @@
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import {reactive, ref, onMounted} from "vue"
-import {useRouter} from 'vue-router'
-import {getBaseInfo, modifyUserInfo} from '../api/user.js'
+import { reactive, ref, onMounted } from "vue"
+import { useRouter } from 'vue-router'
+import { getBaseInfo, modifyUserInfo } from '../api/user.js'
 import city from '../../src/assets/city.json'
-import {addNewAddress, getAddress} from '../api/address.js'
-import {getBuyHistory, deleteBuyHistory} from '../api/buyInfo.js'
-import {getSell, getHistoryData} from '../api/commod.js'
-import {getPartInfo, getAccept, changePart} from '../api/part.js'
-import {ElMessage} from "element-plus";
-import {getCollect, removeCollect} from '../api/collect.js'
+import { addNewAddress, getAddress } from '../api/address.js'
+import { getBuyHistory, deleteBuyHistory } from '../api/buyInfo.js'
+import { getSell, getHistoryData } from '../api/commod.js'
+import { getPartInfo, getAccept, changePart } from '../api/part.js'
+import { ElMessage } from "element-plus";
+import { getCollect, removeCollect } from '../api/collect.js'
+import { Delete, Edit } from '@element-plus/icons-vue'
+import { getUserReport } from '../api/report.js'
 
 const route = useRouter()
 const cityData = ref()
@@ -202,6 +205,7 @@ const showContent = (index) => {
 }
 
 const removeHistory = (row) => {
+  const idCard = localStorage.getItem('idCard')
   deleteBuyHistory(row.id).then(res => {
     ElMessage.success('删除成功')
     getBuyHistory(idCard).then(res => {
@@ -222,7 +226,7 @@ const modifyPhoneTrue = () => {
 
 const deleteCollect = (row) => {
   const idCard = localStorage.getItem('idCard')
-  const payload = {'idCard': idCard, 'partId': row.id}
+  const payload = { 'idCard': idCard, 'partId': row.id }
   removeCollect(payload).then(res => {
     ElMessage('删除收藏')
     getCollect(idCard).then(res => {
@@ -241,7 +245,7 @@ const cancelModifyPhone = () => {
 
 const pushModifyPhone = () => {
   const idCard = localStorage.getItem('idCard')
-  const payload = {'idCard': idCard, 'modify': 'phone', 'modifyValue': parseInt(modifyUserPhone.value)}
+  const payload = { 'idCard': idCard, 'modify': 'phone', 'modifyValue': parseInt(modifyUserPhone.value) }
   modifyUserInfo(payload).then(res => {
     ElMessage.success('修改成功,请刷新查看')
   })
@@ -249,7 +253,7 @@ const pushModifyPhone = () => {
 
 const pushModifyName = () => {
   const idCard = localStorage.getItem('idCard')
-  const payload = {'idCard': idCard, 'modify': 'name', 'modifyValue': modifyUserName.value}
+  const payload = { 'idCard': idCard, 'modify': 'name', 'modifyValue': modifyUserName.value }
   modifyUserInfo(payload).then(res => {
     ElMessage.success('修改成功,请刷新查看')
   })
@@ -266,7 +270,7 @@ const addAddress = () => {
 
 const finish = (row) => {
   const idCard = localStorage.getItem('idCard')
-  const payload = {'id': row.id, 'state': 4}
+  const payload = { 'id': row.id, 'state': 4 }
   changePart(payload).then(res => {
     ElMessage.success('申请成功，等待发布者结算')
     getAccept(idCard).then(res => {
@@ -277,7 +281,7 @@ const finish = (row) => {
 
 const settlement = (row) => {
   const idCard = localStorage.getItem('idCard')
-  const payload = {'id': row.id, 'state': 6}
+  const payload = { 'id': row.id, 'state': 6 }
   changePart(payload).then(res => {
     ElMessage.success('结算成功')
     getPartInfo(idCard).then(res => {
@@ -299,7 +303,7 @@ const newAddress = () => {
       'street': addressForm.street
     }
     addNewAddress(req).then(res => {
-      const {code, msg} = res.data
+      const { code, msg } = res.data
       if (code != 0) {
         alert(msg)
       } else {
@@ -325,12 +329,12 @@ onMounted(async () => {
     })
     historyList = history
   })
-  const payload = {'historyList': historyList}
+  const payload = { 'historyList': historyList }
   await getHistoryData(payload).then(res => {
     data = res.data.msg
   })
   await getAddress(idCard).then(res => {
-    let cityList = []
+    let cityList: any[] = []
     if (res.data.length == 0) {
       addressNo.value = true
     } else {
@@ -348,23 +352,23 @@ onMounted(async () => {
   })
   historyData.value = data
   const cityJson = city
-  let selectCity = []
+  let selectCity: any[] = []
   for (let key in cityJson) {
     if (cityJson[key]['市辖区'] == undefined) {
-      let children = []
-      let child = []
+      let children: any[] = []
+      let child: any[] = []
       for (let childrenKey in cityJson[key]) {
         cityJson[key][childrenKey].forEach((item, _) => {
-          child.push({'label': item, 'value': item})
+          child.push({ 'label': item, 'value': item })
         })
-        children.push({'label': childrenKey, 'value': childrenKey, 'children': child})
+        children.push({ 'label': childrenKey, 'value': childrenKey, 'children': child })
       }
-      selectCity.push({'label': key, 'value': key, 'children': children})
+      selectCity.push({ 'label': key, 'value': key, 'children': children })
     } else {
       let data = {}
-      let children = []
+      let children: any[] = []
       cityJson[key]['市辖区'].forEach((item, _) => {
-        children.push({'value': item, 'label': item})
+        children.push({ 'value': item, 'label': item })
       })
       data['value'] = key
       data['label'] = key
@@ -387,6 +391,9 @@ onMounted(async () => {
   })
   await getCollect(idCard).then(res => {
     collectData.value = res.data
+  })
+  await getUserReport(idCard).then(res => {
+    console.log(res.data)
   })
 })
 </script>

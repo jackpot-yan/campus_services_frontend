@@ -3,10 +3,11 @@
     <div id="detailsTop">
       <el-link @click="retrunHome">返回首页</el-link>
       <el-button type="primary" @click="showComment">评论</el-button>
+      <el-button type="danger" :icon="WarnTriangleFilled" @click="ReportClick">举报</el-button>
     </div>
     <div id="detailsContent">
       <div>
-        <img :src="info.page" style="width: 400px; height: 550px; margin-left: 3%;"/>
+        <img :src="info.page" style="width: 400px; height: 550px; margin-left: 3%;" />
       </div>
       <div style="margin-left: 20px; display: flex; flex-direction: column;">
         <h1 style="font-size: 20px; font-family: 'PingFang SC'; color: black;">{{ info.title }}</h1>
@@ -16,29 +17,27 @@
         <div>
           <span style="color: rgb(255, 79, 0);">¥</span>
           <span style="color: rgb(255, 79, 0); font-family: 'PingFangSC-Regular'; font-size: 38px;">{{
-              price
-            }}</span>
+        price
+      }}</span>
         </div>
         <div>
           <span style="color: black;">购买数量：</span>
-          <el-input-number v-model="num" min="1" size="small" @change="numberChange"/>
+          <el-input-number v-model="num" min="1" size="small" @change="numberChange" />
         </div>
         <div style="margin-top: 4%;">
           <span style="color: black;">配送到：</span>
-          <el-select v-model="defaultAddress" :disabled="addressNo" placeholder="您还没有默认收货地址"
-                     style="width: 500px">
-            <el-option v-for="item in addressList" :key="item.value" :label="item.value"
-                       :value="item.value"/>
+          <el-select v-model="defaultAddress" :disabled="addressNo" placeholder="您还没有默认收货地址" style="width: 500px">
+            <el-option v-for="item in addressList" :key="item.value" :label="item.value" :value="item.value" />
           </el-select>
         </div>
         <div style="margin-top: 4%">
           <el-button
-              style="background: linear-gradient(90deg, rgb(255, 119, 0), rgb(255, 73, 0)); border-top-left-radius:34px;border-bottom-left-radius: 34px;color: white;"
-              @click="buy">立即购买
+            style="background: linear-gradient(90deg, rgb(255, 119, 0), rgb(255, 73, 0)); border-top-left-radius:34px;border-bottom-left-radius: 34px;color: white;"
+            @click="buy">立即购买
           </el-button>
           <el-button
-              style="background:linear-gradient(90deg, rgb(255, 203, 0), rgb(255, 148, 2)); border-top-right-radius:34px; border-bottom-right-radius: 34px;color: white;"
-              @click="Collect">添加收藏
+            style="background:linear-gradient(90deg, rgb(255, 203, 0), rgb(255, 148, 2)); border-top-right-radius:34px; border-bottom-right-radius: 34px;color: white;"
+            @click="Collect">添加收藏
           </el-button>
         </div>
         <el-table :data="commentData" style="margin-top: 10px" max-height="300" width="700">
@@ -72,7 +71,7 @@
       <el-form-item label="总计">{{ price }}</el-form-item>
       <el-form-item label="配送至">{{ defaultAddress }}</el-form-item>
       <el-form-item label="扫码支付">
-        <img style="width: 80%; height: 80%" src="../assets/QR.png"/>
+        <img style="width: 80%; height: 80%" src="../assets/QR.png" />
       </el-form-item>
       <el-form-item>
         <el-button @click="finishBuy">完成</el-button>
@@ -80,18 +79,24 @@
     </el-form>
   </el-dialog>
   <el-dialog v-model="commentDialog">
-    <el-input type="textarea" placeholder="输入内容" v-model="comment"/>
+    <el-input type="textarea" placeholder="输入内容" v-model="comment" />
     <el-button style="margin-top: 30px" type="primary" @click="pushComment">提交</el-button>
+  </el-dialog>
+  <el-dialog v-model="reportDialog">
+    <el-input type="textarea" placeholder="输入内容" v-model="reportComment" />
+    <el-button style="margin-top: 30px" type="primary" @click="pushReport">提交</el-button>
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import {onBeforeMount, ref, onMounted} from 'vue'
-import {useRouter} from 'vue-router'
-import {getAddress} from '../api/address.js'
-import {ElMessage} from 'element-plus'
-import {addNewBuy} from '../api/buyInfo.js'
-import {addCollect} from '../api/collect.js'
-import {addComment, getComment} from '../api/comment.js'
+import { onBeforeMount, ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { getAddress } from '../api/address.js'
+import { ElMessage } from 'element-plus'
+import { addNewBuy } from '../api/buyInfo.js'
+import { addCollect } from '../api/collect.js'
+import { addComment, getComment } from '../api/comment.js'
+import { addReport } from '../api/report.js'
+import { WarnTriangleFilled } from '@element-plus/icons-vue'
 
 const route = useRouter()
 const info = ref()
@@ -102,12 +107,14 @@ const price = ref<string>('')
 const defaultAddress = ref<string>('')
 const buyDialog = ref<boolean>(false)
 const addressNo = ref<boolean>(false)
+const reportDialog = ref<boolean>(false)
 const comment = ref<string>('')
+const reportComment = ref<string>('')
 const addressList = ref<any[]>([])
 
 const Collect = () => {
   const idCard = localStorage.getItem('idCard')
-  const payload = {partId: info.value.id, 'idCard': idCard}
+  const payload = { partId: info.value.id, 'idCard': idCard }
   addCollect(payload).then(res => {
     ElMessage.success('添加收藏成功')
   })
@@ -115,15 +122,30 @@ const Collect = () => {
 
 const pushComment = () => {
   const idCard = localStorage.getItem('idCard')
-  const payload = {'idCard': idCard, 'content': comment.value, 'partId': info.value.id}
+  const payload = { 'idCard': idCard, 'content': comment.value, 'partId': info.value.id }
   addComment(payload).then(res => {
     ElMessage.success('评论成功')
+    commentDialog.value = false
   })
 }
+
+const pushReport = () => {
+  const idCard = localStorage.getItem('idCard')
+  const payload = { 'idCard': idCard, 'content': reportComment.value, 'commodId': info.value.id }
+  addReport(payload).then(res => {
+    ElMessage.success('反馈成功，等待管理员回应')
+    reportDialog.value = false
+  })
+}
+
 const retrunHome = () => {
   route.push({
     path: '/home'
   })
+}
+
+const ReportClick = () => {
+  reportDialog.value = true
 }
 
 const showComment = () => {

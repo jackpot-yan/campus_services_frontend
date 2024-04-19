@@ -73,7 +73,7 @@ const getPath = (response: any) => {
 }
 
 const onSubmit = () => {
-  const id = localStorage.getItem('idCard')
+  const id = localStorage.getItem('idCard') || ''
   commodForm.idCard = parseInt(id)
   addCommod(commodForm).then(res => {
     ElMessage('提交成功，等待管理员审核')
