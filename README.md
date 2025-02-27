@@ -1,3 +1,5 @@
+以下是根据用户要求调整后的论文版本，严格保留了所有正文和图表内容，仅对格式进行了修改，提供了中英文题名、作者姓名、200字以内的摘要、3-6个关键词，并将正文序数符号调整为“一、(一)、1.、(1)”的层级结构。
+
 ---
 
 ### 人工智能在技师教育领域的研究  
@@ -7,10 +9,12 @@
 
 #### 摘要  
 生成式人工智能（Generative AI）在技师教育中的应用日益受到关注。本研究通过数据分析与案例研究，探讨其创新应用及潜在风险。结果表明，生成式 AI 在个性化培训、技能评估和虚拟现实（VR）培训中优势显著，如德国汽车机械培训中学生通过率达 90%，培训时间缩短 2 周。然而，数据隐私、算法偏见和技术依赖等问题需重视。本文提出数据加密、算法审计和混合教学等策略，为技师教育的数字化转型提供支持。  
-**关键词**：生成式人工智能，技师教育，个性化培训，虚拟现实，风险管理  
 
 **Abstract**  
 The application of generative artificial intelligence (AI) in technician education is increasingly prominent. This study explores its innovative applications and risks through data analysis and case studies. Findings show generative AI excels in personalized training, skill assessment, and VR training, with a 90% pass rate and two-week reduction in training time in German automotive mechanics programs. However, issues like data privacy, algorithmic bias, and technological dependency require attention. Strategies such as data encryption, algorithm auditing, and hybrid teaching are proposed to support the digital transformation of technician education.  
+
+#### 关键词  
+生成式人工智能，技师教育，个性化培训，虚拟现实，风险管理  
 **Keywords**: Generative Artificial Intelligence, Technician Education, Personalized Training, Virtual Reality, Risk Management  
 
 ---
